@@ -1,0 +1,5 @@
+1. Diseño modular
+2. Diagramas de caso de uso
+3. Diagramas de tablas relacionales
+
+***Movies***	|	***Halls***	|	***Seats***	|	***Schedules***	|	Tickets 	|	***Usuarios***	|	***Administradores***
