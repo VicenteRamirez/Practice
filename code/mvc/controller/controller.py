@@ -1,7 +1,8 @@
 from model.model import Model
 from view.view import View
 from datetime import date
-
+import sys
+    
 class Controller:
     """
     *******************************
@@ -15,16 +16,24 @@ class Controller:
     
     def start(self):
         self.view.start()
-        print('Admin 1) | Usario 2) | Salir 3)')
-        op = int(input())
-        if (op == 1):
-            self.main_menu()
-        elif(op == 2):
-            self.user_main_menu()
-        elif op == 3:
+        self.inicio()
+         
+    def inicio(self):
+        o = '0'
+        while o != '3':
+            #self.view.user_main_menu()
+            self.view.option('3')
+            print('Admin 1) | Usario 2) | Salir 3)')
+            o = input()
+            if o == '1':
+                self.main_menu()
+            elif o == '2':
+                self.user_main_menu()
+            elif o == '3':
                 self.view.end()
-        else:
-            self.view.not_valid_option()
+                sys.exit()
+            else:
+                self.view.not_valid_option()
         return
     
     """
@@ -37,7 +46,7 @@ class Controller:
         o = '0'
         while o != '9':
             self.view.main_menu()
-            self.view.option('9')
+            self.view.option('8')
             o = input()
             if o == '1':
                 self.admin_menu()
@@ -103,7 +112,7 @@ class Controller:
         o = '0'
         while o != '6':
             self.view.user_main_menu()
-            self.view.option('6')
+            self.view.option('5')
             o = input()
             if o == '1':
                 self.user_menu()

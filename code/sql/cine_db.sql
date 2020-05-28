@@ -1,4 +1,4 @@
-drop database cine_db;
+#drop database cine_db;
 create database if not exists cine_db;
 
 use cine_db;
