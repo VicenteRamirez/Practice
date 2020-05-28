@@ -15,9 +15,9 @@ class View:
         print('================================')
 
     def main_menu(self):
-        print('================================')
-        print('=        Menu Principal        =')
-        print('================================')
+        print('======================================')
+        print('=        Menu Administradores        =')
+        print('======================================')
         print('1. Administradores')
         print('2. Usuarios')
         print('3. Películas')
@@ -26,6 +26,16 @@ class View:
         print('6. Horarios')
         print('7. Ticket')
         print('8. Regresar')
+
+    def user_main_menu(self):
+        print('============================================')
+        print('=        Menu principal de usuario         =')
+        print('============================================')
+        print('1. Usuarios')
+        print('2. Películas')
+        print('3. Horarios')
+        print('4. Ticket')
+        print('5. Regresar')
 
     def option(self,last):
         print('Selecciona un opcion (1-'+last+'): ', end = '')
@@ -76,7 +86,14 @@ class View:
         print('-'*156)
 
     
-    
+    def user_admin_menu(self):
+        print('**************************')
+        print('* -- Submenu Usuarios -- *')
+        print('**************************')
+        print('1. Mostrar un usuario')
+        print('2. Mostrar todos los usuarios')
+        print('3. Mostrar los usuarios por apellido')
+        print('4. Regresar')
 
     def user_menu(self):
         print('**************************')
@@ -84,11 +101,11 @@ class View:
         print('**************************')
         print('1. Agregar un usuario')
         print('2. Mostrar un usuario')
-        print('3. Mostrar todos los usuarios')
-        print('4. Mostrar los usuarios por apellido')
-        print('5. Actualizar un usuario')
-        print('6. Borrar un usuario')
-        print('7. Regresar')
+        #print('3. Mostrar todos los usuarios')
+        #print('4. Mostrar los usuarios por apellido')
+        print('3. Actualizar un usuario')
+        print('4. Borrar un usuario')
+        print('5. Regresar')
     
     def show_a_user(self, record):
         print(f'{record[0]:<6}|{record[1]:<35}|{record[2]:<35}|{record[3]:<35}|{record[4]:<35}')
@@ -116,8 +133,18 @@ class View:
         print('5. Actualizar película')
         print('6. Borrar película')
         print('7. Regresar')
+
+    def user_main_menu_movie(self):
+        print('***************************')
+        print('* -- Menú de películas -- *')
+        print('***************************')
+        print('1. Mostrar película')
+        print('2. Mostrar todos las películas')
+        print('3. Mostrar películas por nombre')
+        print('4. Regresar')
     
     def show_a_movie(self, record):
+        print('ID película: ', record[0])
         print('Nombre:', record[1])
         print('Duración: ', record[2])
         print('Idioma: ', record[3])
@@ -185,13 +212,16 @@ class View:
     
     def show_a_seat(self, record):
         if record[1] == 0x00:
-            disp = 'Libre'
+            disp = 'libre'
         else:
-            disp = 'Ocupado';
+            disp = 'ocupado'
         print('ID:', record[0])
         print('Disponibilidad: ', disp)
         print('Sala:', record[2])
-        
+    
+    def show_a_seat_disp(self, record):
+        print('ID del asiento:', record[0])
+
     
     def schedule_menu(self):
         print('******************************')
@@ -205,6 +235,16 @@ class View:
         print('6. Actualizar un horario')
         print('7. Borrar un horario')
         print('8. Regresar')
+    
+    def user_main_menu_schedule(self):
+        print('******************************')
+        print('* -- Submenu Horarios    --  *')
+        print('******************************')
+        print('1. Mostrar un horario')
+        print('2. Mostrar todos los horarios')
+        print('3. Mostrar horarios por película')
+        print('4. Mostrar horarios por día')
+        print('5. Regresar')
 
     def show_schedule_header(self, header):
         print(header.center(53,'*'))
@@ -216,6 +256,44 @@ class View:
         print(record[6]+' en '+ record[8]+' subtitulada en '+ record[9] + ' ('+record[7]+')')
         print('Sala: ',record[4])
         
+    
+    
+    """
+    **************************
+    * A view for horarios    *
+    **************************
+    """
+    def ticket_menu(self):
+        print('****************************')
+        print('* -- Submenu Boletos    -- *')
+        print('****************************')
+        print('1. Agregar un ticket')
+        print('2. Mostrar un ticket')
+        print('3. Mostrar todos los tickets')
+        print('4. Mostrar tickets por usuario:') #USUARIO
+        print('5. Mostrar tickets por horario') #UPDATE
+        print('6. Regresar')
+    
+    def user_main_menu_tickets(self):
+        print('****************************')
+        print('* -- Submenu Tickets    -- *')
+        print('****************************')
+        print('1. Agregar un ticket')
+        print('2. Mostrar un ticket')
+        print('3. Mostrar tickets por usuario:') 
+        print('4. Regresar')
+
+    def show_ticket_header(self, header):
+        print(header.center(53,'*'))
+        print('-'*53)
+    
+    def show_a_ticket(self, record1,record2):
+        print('ID:', record1[0])
+        print('Usuario:', record1[10], ' '+ record1[11]+' Correo: ' +record1[12])
+        print('Fecha: ', str(record1[6])+' Hora: '+record1[5])
+        print(record2[1] +' en '+ record2[3]+ ' subtitulada en '+ record2[4])
+        print('Sala: ',str(record1[8]) +' asiento: '+str(record1[3]))
+       
 
     
     

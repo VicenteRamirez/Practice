@@ -15,7 +15,17 @@ class Controller:
     
     def start(self):
         self.view.start()
-        self.main_menu()
+        print('Admin 1) | Usario 2) | Salir 3)')
+        op = int(input())
+        if (op == 1):
+            self.main_menu()
+        elif(op == 2):
+            self.user_main_menu()
+        elif op == 3:
+                self.view.end()
+        else:
+            self.view.not_valid_option()
+        return
     
     """
     ***********************
@@ -25,14 +35,14 @@ class Controller:
 
     def main_menu(self):
         o = '0'
-        while o != '8':
+        while o != '9':
             self.view.main_menu()
-            self.view.option('8')
+            self.view.option('9')
             o = input()
             if o == '1':
                 self.admin_menu()
             elif o == '2':
-                self.user_menu()
+                self.user_admin_menu()
             elif o == '3':
                 self.movie_menu()
             elif o == '4':
@@ -44,10 +54,13 @@ class Controller:
             elif o == '7':
                 self.ticket_menu()
             elif o == '8':
-                self.view.end()
+                self.start()
             else:
                 self.view.not_valid_option()
         return
+
+    
+    
     
     def update_lists(self, fs , vs):
         fields = []
@@ -86,6 +99,25 @@ class Controller:
                 self.view.not_valid_option()
         return
 
+    def user_main_menu(self):
+        o = '0'
+        while o != '6':
+            self.view.user_main_menu()
+            self.view.option('6')
+            o = input()
+            if o == '1':
+                self.user_menu()
+            elif o == '2':
+                self.user_main_menu_movie()
+            elif o == '3':
+                self.user_main_menu_schedule()
+            elif o == '4':
+                self.user_main_menu_tickets()
+            elif o == '5':
+                self.start()
+            else:
+                self.view.not_valid_option()
+        return
     
     def ask_admin(self):
         self.view.ask('Nombre: ')
@@ -198,22 +230,34 @@ class Controller:
 
     def user_menu(self):
         o = '0'
-        while o != '7':
+        while o != '5':
             self.view.user_menu()
-            self.view.option('7')
+            self.view.option('5')
             o = input()
             if o == '1':
                 self.create_user()
             elif o == '2':
                 self.read_user() 
             elif o == '3':
-                self.read_all_user()
-            elif o == '4':
-                self.read_user_lname()
-            elif o == '5':
                 self.update_user()
-            elif o == '6':
+            elif o == '4':
                 self.delete_user()
+            else:
+                self.view.not_valid_option()
+        return
+    
+    def user_admin_menu(self):
+        o = '0'
+        while o != '4':
+            self.view.user_admin_menu()
+            self.view.option('4')
+            o = input()
+            if o == '1':
+                self.read_user()
+            elif o == '2':
+                self.read_all_user() 
+            elif o == '3':
+                self.read_user_lname()
             else:
                 self.view.not_valid_option()
         return
@@ -232,9 +276,9 @@ class Controller:
     
     def create_user(self):
         u_name, u_lastName, u_email, u_phone = self.ask_user()
-        out = self.model.create_user(u_name, u_lastName, u_email, u_phone)
+        out, user = self.model.create_user(u_name, u_lastName, u_email, u_phone)
         if out == True:
-            self.view.ok(u_name+' '+u_lastName +' Correo eléctronico: '+ u_email+' ',' agrego')
+            self.view.ok('ID: '+ str(user[0])+' ' +u_name+' '+u_lastName +' Correo eléctronico: '+ u_email+' ',' agrego')
         else:
             self.view.error('No se pudo agregar el producto')
         return
@@ -312,7 +356,7 @@ class Controller:
     def delete_user(self):
         self.view.ask('Usuario a borrar: ')
         id_usuario = input()
-        count = self.model.delete_admin(id_usuario)
+        count = self.model.delete_user(id_usuario)
         if count != 0:
             self.view.ok(id_usuario, 'borro')
         else:
@@ -346,6 +390,23 @@ class Controller:
                 self.view.not_valid_option()
         return
 
+    def user_main_menu_movie(self):
+        o = '0'
+        while o != '5':
+            self.view.user_main_menu_movie()
+            self.view.option('5')
+            o = input()
+            if o == '1':
+                self.read_a_movie()
+            elif o == '2':
+                self.read_all_movie()
+            elif o == '3':
+                self.read_movie_name()
+            elif o == '4':
+                return
+            else:
+                self.view.not_valid_option()
+        return
     
     def ask_movie(self):
         self.view.ask('Nombre: ')
@@ -669,12 +730,27 @@ class Controller:
             disp = 0x00
         elif (disp == 'ocupado'):
             disp = 0x01
-        seats = self.model.read_disp_seat(disp, hall)        
+        seats = self.model.read_disp_seat(disp, hall)
+        print(seats)    
         if type(seats) == list:
             if (disp == 0x00):
                 self.view.show_seat_header('Asientos disponibles' )
             else:
                 self.view.show_seat_header('Asientos ocupados' )
+            for seat in seats:
+                self.view.show_a_seat_disp(seat)
+                self.view.show_midder()
+            self.view.show_footer()
+        else:
+            self.view.error('Problema al leer los asientos')
+        return
+
+    def read_seats_hall(self):
+        self.view.ask('ID sala: ')
+        id_hall = input()
+        seats = self.model.read_seats_hall(id_hall)
+        if type(seats) == list:
+            self.view.show_seat_header('Asientos de la sala '+id_hall)
             for seat in seats:
                 self.view.show_a_seat(seat)
                 self.view.show_midder()
@@ -693,7 +769,7 @@ class Controller:
             if (op == '1'):
                 self.update_seat()
             else:
-                return
+                return 0
 
         if type(seat) == tuple:
             self.view.show_seat_header(' Datos del asiento '+id_seat+ ' ')
@@ -713,9 +789,10 @@ class Controller:
         out = self.model.update_seat(fields,vals)
         if out == True:
             self.view.ok(id_seat, 'actualizo')
+            return id_seat
         else:
             self.view.error('Error, no se pudo actualizar el asiento')
-        return
+        return 0
 ###############
     
     def reset_seats(self):
@@ -781,6 +858,26 @@ class Controller:
             else:
                 self.view.not_valid_option()
         return
+    
+    def user_main_menu_schedule(self):
+        o = '0'
+        while o != '5':
+            self.view.user_main_menu_schedule()
+            self.view.option('5')
+            o = input()
+            if o == '1':
+                self.read_a_schedule()
+            elif o == '2':
+                self.read_all_schedule()
+            elif o == '3':
+                self.read_schedule_movie()
+            elif o == '4':
+                self.read_schedules_date()
+            elif o == '5':
+                return
+            else:
+                self.view.not_valid_option()
+        return
 
     
     def ask_schedule(self):
@@ -825,7 +922,6 @@ class Controller:
         if type(schedules) == list:
             self.view.show_schedule_header(' Todos los horarios ')
             for schedule in schedules:
-                print(schedule)
                 self.view.show_a_schedule(schedule)
                 self.view.show_midder()
             self.view.show_footer()
@@ -901,3 +997,137 @@ class Controller:
             else:
                 self.view.error('Prblema al borrar el horario')
         return
+
+    """
+    *******************
+    *  Ticket menu    *
+    *******************
+    """
+    
+    def ticket_menu(self):
+        o = '0'
+        while o != '6':
+            self.view.ticket_menu()
+            self.view.option('6')
+            o = input()
+            if o == '1':
+                self.create_ticket()
+            elif o == '2':
+                self.read_a_ticket()
+            elif o == '3':
+                self.read_all_ticket()
+            elif o == '4':
+                self.read_ticket_user()
+            elif o == '5':
+                self.read_ticket_schedule()
+            elif o == '6':
+                return
+            else:
+                self.view.not_valid_option()
+        return
+    
+    def user_main_menu_tickets(self):
+        o = '0'
+        while o != '4':
+            self.view.user_main_menu_tickets()
+            self.view.option('4')
+            o = input()
+            if o == '1':
+                self.create_ticket()
+            elif o == '2':
+                self.read_a_ticket()
+            elif o == '3':
+                self.read_ticket_user()
+            elif o == '4':
+                return
+            else:
+                self.view.not_valid_option()
+        return
+
+    
+    def ask_ticket(self):
+        self.view.ask('ID usurio: ')
+        t_id_usuario = input()
+        self.view.ask('ID horario: ')
+        t_id_schedule = input()
+        schedule = self.model.read_schedule(t_id_schedule)
+        hall = self.model.read_disp_seat(0x00,schedule[4])
+        print('Asientos disponibles en la sala: ',hall)
+    
+        id_seat = self.update_seat()
+        
+        return(t_id_usuario,t_id_schedule,schedule[4],id_seat)
+    
+    def create_ticket(self):
+        t_id_usuario,t_id_schedule,t_id_hall,t_id_seat = self.ask_ticket()
+        
+        if(t_id_seat == 0):
+            return
+        out = self.model.create_ticket(t_id_usuario,t_id_schedule,t_id_seat)
+        schedule = self.model.read_schedule(t_id_schedule)
+        if out == True:
+            self.view.ok('El ticket del usuario: '+t_id_usuario +' para la película: '+ schedule[6] +' en '+ schedule[8] +' subtitulada en '+schedule[9]+'\n para el dia '+str(schedule[2])+' a las '+ schedule[1]+'; sala: '+ str(t_id_hall)+', asiento: '+ str(t_id_seat), 'agrego')
+        else:
+            self.view.error('No se pudo agregar el ticket')
+        return
+    
+    def read_a_ticket(self):
+        self.view.ask('ID del ticket: ')    
+        id_ticket = input()
+        ticket,schedule = self.model.read_ticket(id_ticket)
+        if type(ticket) == tuple:
+            self.view.show_ticket_header('Id horario: '+id_ticket+' ')
+            self.view.show_a_ticket(ticket, schedule)
+            self.view.show_midder()
+            self.view.show_footer()
+        else:
+            if ticket == None:
+                self.view.error('El ticket no existe')
+            else:
+                self.view.error('Hay un problema al leer el ticket')
+        return
+    
+    def read_all_ticket(self):
+        tickets, schedules = self.model.read_all_ticket()  
+        if type(tickets) == list:
+            self.view.show_ticket_header(' Todos los tickets ')
+            for i in range(len(tickets)):
+                self.view.show_a_ticket(tickets[i],schedules[i])
+                self.view.show_midder()
+            self.view.show_footer()
+        else:
+            self.view.error('Problema al leer los tickets')
+        return
+    
+
+    def read_ticket_user(self):
+        self.view.ask('ID del usuario: ')
+        id_user = input()
+        tickets, schedules = self.model.read_ticket_user(id_user)  
+        if type(tickets) == list:
+            self.view.show_ticket_header(' Todos los tickets del usuario '+ id_user)
+            for i in range(len(tickets)):
+                self.view.show_a_ticket(tickets[i],schedules[i])
+                self.view.show_midder()
+            self.view.show_footer()
+        else:
+            self.view.error('Problema al leer los tickets')
+        return
+    
+    def read_ticket_schedule(self):
+        self.view.ask('ID horario: ')
+        schedule = input()
+        tickets, schedules = self.model.read_ticket_schedule(schedule)  
+        if type(tickets) == list:
+            self.view.show_ticket_header(' Tickets del horario '+ schedule)
+            for i in range(len(tickets)):
+                self.view.show_a_ticket(tickets[i],schedules[i])
+                self.view.show_midder()
+            self.view.show_footer()
+        else:
+            self.view.error('Problema al leer los tickets')
+        return
+    
+   
+   
+   

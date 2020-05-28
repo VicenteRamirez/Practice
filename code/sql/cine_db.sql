@@ -1,4 +1,4 @@
-#drop database cine_db;
+drop database cine_db;
 create database if not exists cine_db;
 
 use cine_db;
@@ -68,6 +68,7 @@ create table if not exists ticket( #Horarios
 	id_ticket int not null auto_increment,
     t_id_usuario int not null,
     t_id_schedule int not null,
+    t_id_seat int not null,
     constraint fkt_id_usuario
     foreign key(t_id_usuario)
 		references user(id_user)
@@ -75,6 +76,10 @@ create table if not exists ticket( #Horarios
 	constraint fkt_id_schedule
     foreign key(t_id_schedule)
 		references schedule(id_schedule)
+        on update cascade,
+	constraint fkt_id_seat
+    foreign key(t_id_seat)
+		references seat(id_seat)
         on update cascade,
     primary key(id_ticket)
 )engine = InnoDB;

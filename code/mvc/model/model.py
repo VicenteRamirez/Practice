@@ -107,7 +107,11 @@ class Model:
             vals = (u_name, u_lastName, u_email, u_phone)
             self.cursor.execute(sql, vals)
             self.cnx.commit()
-            return True
+            sql = 'SELECT id_user FROM user WHERE u_name = %s AND u_lastName = %s AND u_email = %s AND u_phone = %s'
+            vals = (u_name, u_lastName, u_email, u_phone)
+            self.cursor.execute(sql, vals) #Toma la instrucción 'sql' y toma los valores de 'vals' para reemplazarlos por los '%s'
+            record = self.cursor.fetchone()
+            return (True, record)
 
         except connector.Error as err:
             self.cnx.rollback() #Elimina la operación intermedia de SQL y no ejecuta el cambio en la base de datos 
@@ -348,7 +352,7 @@ class Model:
     
     def read_disp_seat(self, se_status, se_id_hall):
         try:
-            sql = 'SELECT * FROM seat WHERE se_status = %s and se_id_hall = %s'
+            sql = 'SELECT id_seat FROM seat WHERE se_status = %s and se_id_hall = %s'
             #sql = 'SELECT libro.*,autor.a_nombre,autor.a_apellidoPat FROM libro JOIN autor ON libro.l_id_autor = autor.id_autor and libro.l_nombre = %s'
             vals = (se_status, se_id_hall)
             self.cursor.execute(sql,vals)
@@ -473,4 +477,89 @@ class Model:
             return count
         except connector.Error as err:
             self.cnx.rollback()
+            return err
+
+    
+    """
+    *************************
+    *  Ticket methods    *
+    *************************
+    """
+    def create_ticket(self, t_id_usuario,t_id_schedule,t_id_seat):
+        try:
+            sql = 'INSERT INTO ticket (`t_id_usuario`, `t_id_schedule`, `t_id_seat`) VALUES (%s, %s, %s)'
+            vals = ( t_id_usuario,t_id_schedule,t_id_seat )
+            self.cursor.execute(sql, vals)
+            self.cnx.commit()
+            return True
+        except connector.Error as err:
+            self.cnx.rollback()
+            return err
+    
+    def read_ticket(self, id_ticket):
+        try:
+            #sql = 'SELECT * FROM schedule WHERE id_schedule = %s'
+            sql = 'SELECT ticket.*,schedule.*,user.* FROM ticket JOIN schedule ON ticket.t_id_schedule = schedule.id_schedule JOIN user ON ticket.t_id_usuario = user.id_user AND id_ticket = %s'  #JOIN movie ON schedule.id_movie = movie.id_movie                
+            vals = (id_ticket,)
+            self.cursor.execute(sql, vals)
+            record1 = self.cursor.fetchone()
+            sql = 'SELECT movie.* FROM schedule JOIN movie ON schedule.s_id_movie = movie.id_movie AND id_schedule = %s'            
+            vals = (record1[2],)
+            self.cursor.execute(sql, vals)
+            record2 = self.cursor.fetchone()
+            return record1,record2
+        except connector.Error as err:
+            return err
+    
+    def read_all_ticket(self):
+        try:
+            #sql = 'SELECT * FROM schedule WHERE id_schedule = %s'
+            sql = 'SELECT ticket.*,schedule.*,user.* FROM ticket JOIN schedule ON ticket.t_id_schedule = schedule.id_schedule JOIN user ON ticket.t_id_usuario = user.id_user'  #JOIN movie ON schedule.id_movie = movie.id_movie                
+            self.cursor.execute(sql)
+            record1 = self.cursor.fetchall()
+            record2 = []
+            for record in record1:
+                sql = 'SELECT movie.* FROM schedule JOIN movie ON schedule.s_id_movie = movie.id_movie AND id_schedule = %s'            
+                vals = (record[2],)
+                self.cursor.execute(sql, vals)
+                schedule = self.cursor.fetchone()
+                record2.append(schedule)
+            return record1,record2
+        except connector.Error as err:
+            return err
+
+    def read_ticket_user(self, id_user):
+        try:
+            #sql = 'SELECT * FROM schedule WHERE id_schedule = %s'
+            sql = 'SELECT ticket.*,schedule.*,user.* FROM ticket JOIN schedule ON ticket.t_id_schedule = schedule.id_schedule JOIN user ON ticket.t_id_usuario = user.id_user AND id_user = %s'  #JOIN movie ON schedule.id_movie = movie.id_movie         
+            vals = (id_user,)       
+            self.cursor.execute(sql, vals)
+            record1 = self.cursor.fetchall()
+            record2 = []
+            for record in record1:
+                sql = 'SELECT movie.* FROM schedule JOIN movie ON schedule.s_id_movie = movie.id_movie AND id_schedule = %s'            
+                vals = (record[2],)
+                self.cursor.execute(sql, vals)
+                schedule = self.cursor.fetchone()
+                record2.append(schedule)
+            return record1,record2
+        except connector.Error as err:
+            return err
+    
+    def read_ticket_schedule(self, t_id_schedule):
+        try:
+            #sql = 'SELECT * FROM schedule WHERE id_schedule = %s'
+            sql = 'SELECT ticket.*,schedule.*,user.* FROM ticket JOIN schedule ON ticket.t_id_schedule = schedule.id_schedule JOIN user ON ticket.t_id_usuario = user.id_user AND t_id_schedule = %s'  #JOIN movie ON schedule.id_movie = movie.id_movie         
+            vals = (t_id_schedule,)       
+            self.cursor.execute(sql, vals)
+            record1 = self.cursor.fetchall()
+            record2 = []
+            for record in record1:
+                sql = 'SELECT movie.* FROM schedule JOIN movie ON schedule.s_id_movie = movie.id_movie AND id_schedule = %s'            
+                vals = (record[2],)
+                self.cursor.execute(sql, vals)
+                schedule = self.cursor.fetchone()
+                record2.append(schedule)
+            return record1,record2
+        except connector.Error as err:
             return err
